@@ -40,6 +40,13 @@ new AudioManager();
 // as a fallback in case fetchActiveBoards() below is empty.
 const leaderboardHud = new LeaderboardHud(leaderboards, {
 	defaultBoardKey: PIX3L_BOARDS.MAIN_SCORE,
+	// Unlike the pause-menu's leaderboard button (only reachable once already
+	// paused), this overlay's own pinned button/hotkey can open it mid-run -
+	// pause first so enemies don't keep closing in unseen behind the panel
+	// (same rationale as the visibilitychange auto-pause in Game.js).
+	onOpen: () => {
+		if (game.phase === 'playing') game.pause();
+	},
 });
 
 // Same view as the pinned 🏆 button/'L' key, reachable from the pause menu too.

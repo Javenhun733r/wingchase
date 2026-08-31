@@ -22,10 +22,15 @@ export class LeaderboardHud {
 	 * @param {string} [options.toggleKey] - Single-letter key that opens/closes the overlay.
 	 * @param {string} [options.defaultBoardKey] - Pre-filled board key, used before fetchActiveBoards() resolves.
 	 * @param {HTMLElement} [options.container] - Mount point, defaults to document.body.
+	 * @param {Function} [options.onOpen] - Called just before the overlay opens (e.g. to pause the game -
+	 *   unlike the pause-menu's leaderboard button, the pinned button/hotkey here can open this overlay
+	 *   mid-run, and without a hook the game keeps ticking - enemies closing in, keys still moving the
+	 *   player - unseen behind the panel).
 	 */
 	constructor(manager, options = {}) {
 		this.manager = manager;
 		this.toggleKey = (options.toggleKey ?? 'l').toLowerCase();
+		this.onOpen = options.onOpen ?? null;
 		this.scope = 'all';
 		this.boards = [];
 		this.isOpen = false;
@@ -36,6 +41,7 @@ export class LeaderboardHud {
 	}
 
 	open() {
+		this.onOpen?.();
 		this.isOpen = true;
 		this.backdropEl.classList.remove('lb-hidden');
 		if (this.boards.length === 0) this.loadBoards();
