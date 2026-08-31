@@ -35,4 +35,4 @@ jobs:
           mkdir -p .p3-tools
           curl -sSL https://player3.gg/sdk/build/pix3l-validate.mjs -o .p3-tools/pix3l-validate.mjs
           curl -sSL https://player3.gg/sdk/build/player3-deploy.mjs -o .p3-tools/player3-deploy.mjs
-          node .p3-tools/player3-deploy.mjs --build ./dist --game-type full
+          node .p3-tools/player3-deploy.mjs --build ./dist --game-type demo
