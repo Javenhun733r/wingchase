@@ -27,8 +27,12 @@ jobs:
       - name: Build web export
         run: npm run build
 
-      - name: Deploy to Player3
+      - name: Deploy to Player 3
         env:
           PLAYER3_API_TOKEN: ${{ secrets.PLAYER3_API_TOKEN }}
           PLAYER3_GAME_ID: ${{ secrets.PLAYER3_GAME_ID }}
-        run: node public/sdk/build/player3-deploy.mjs --build ./dist --game-type full
+        run: |
+          mkdir -p .p3-tools
+          curl -sSL https://player3.gg/sdk/build/pix3l-validate.mjs -o .p3-tools/pix3l-validate.mjs
+          curl -sSL https://player3.gg/sdk/build/player3-deploy.mjs -o .p3-tools/player3-deploy.mjs
+          node .p3-tools/player3-deploy.mjs --build ./dist --game-type full
