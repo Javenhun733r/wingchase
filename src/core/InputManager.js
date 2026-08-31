@@ -12,6 +12,11 @@ export class InputManager {
 
 		window.addEventListener('keydown', (e) => this.handleKeyDown(e));
 		window.addEventListener('keyup', (e) => this.keys.delete(e.code));
+
+		// The browser stops delivering keyup events once the window loses focus
+		// (e.g. alt-tabbing to another app), which would otherwise leave a held
+		// movement key "stuck" and make the player keep sliding after refocus.
+		window.addEventListener('blur', () => this.keys.clear());
 	}
 
 	handleKeyDown(e) {
