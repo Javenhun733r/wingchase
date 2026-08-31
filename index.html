@@ -3,9 +3,20 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Wingchase</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap"
+			rel="stylesheet"
+		/>
 		<style>
 			:root {
 				color-scheme: dark;
+				/* Shared across index.html, LeaderboardHud.js and ConfirmModal.js -
+				   custom properties on :root cascade to their dynamically injected
+				   <style> tags too, so the font stays defined in one place. */
+				--font-body: 'Segoe UI', system-ui, sans-serif;
+				--font-display: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
 			}
 			html,
 			body {
@@ -15,7 +26,7 @@
 				background: #0a0a1a;
 			}
 			body {
-				font-family: 'Segoe UI', system-ui, sans-serif;
+				font-family: var(--font-body);
 			}
 			canvas {
 				display: block;
@@ -32,9 +43,17 @@
 				pointer-events: none;
 				user-select: none;
 				z-index: 5;
+				padding: 10px 16px;
+				background: rgba(10, 10, 26, 0.5);
+				border: 1px solid rgba(79, 172, 254, 0.25);
+				border-radius: 12px;
+				box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 			}
 			#hud .row {
 				margin-bottom: 4px;
+			}
+			#hud .row:last-child {
+				margin-bottom: 0;
 			}
 			#hud .score-value {
 				color: #6ff7ff;
@@ -55,12 +74,15 @@
 				position: fixed;
 				bottom: 16px;
 				left: 16px;
-				color: #7d8aa3;
+				color: #b8c6d9;
 				font-size: 13px;
 				letter-spacing: 0.5px;
 				pointer-events: none;
 				user-select: none;
 				z-index: 5;
+				padding: 6px 12px;
+				background: rgba(10, 10, 26, 0.4);
+				border-radius: 999px;
 			}
 
 			#overlay {
@@ -79,15 +101,20 @@
 				color: #f2fbff;
 				text-align: center;
 				z-index: 10;
-				transition: opacity 0.25s ease;
+				backdrop-filter: blur(10px) saturate(1.2);
+				-webkit-backdrop-filter: blur(10px) saturate(1.2);
+				transition: opacity 0.25s ease, visibility 0.25s;
 			}
 			#overlay.hidden {
 				opacity: 0;
+				visibility: hidden;
 				pointer-events: none;
 			}
 			#overlay h1 {
 				margin: 0;
-				font-size: 42px;
+				font-family: var(--font-display);
+				font-size: 44px;
+				font-weight: 700;
 				letter-spacing: 2px;
 				color: #6ff7ff;
 				text-shadow: 0 0 20px rgba(111, 247, 255, 0.6);
@@ -126,15 +153,25 @@
 				border-radius: 999px;
 				cursor: pointer;
 				box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+				transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
 			}
 			#overlay button:hover {
 				filter: brightness(1.08);
+				transform: translateY(-2px);
+				box-shadow: 0 10px 26px rgba(79, 172, 254, 0.5);
+			}
+			#overlay button:active {
+				transform: translateY(0) scale(0.97);
 			}
 			#overlay button.secondary {
 				margin-top: 0;
 				color: #6ff7ff;
 				background: transparent;
 				border: 1px solid #4facfe;
+				box-shadow: none;
+			}
+			#overlay button.secondary:hover {
+				background: rgba(79, 172, 254, 0.12);
 				box-shadow: none;
 			}
 
@@ -170,9 +207,14 @@
 				font-size: 16px;
 				line-height: 1;
 				cursor: pointer;
+				transition: transform 0.15s ease, filter 0.15s ease;
 			}
 			#audio-bar button:hover {
 				filter: brightness(1.2);
+				transform: scale(1.08);
+			}
+			#audio-bar button:active {
+				transform: scale(0.96);
 			}
 			#audio-bar button:focus-visible,
 			#overlay button:focus-visible {
@@ -203,6 +245,11 @@
 				pointer-events: none;
 				user-select: none;
 				z-index: 5;
+				padding: 6px 12px 6px 6px;
+				background: rgba(10, 10, 26, 0.5);
+				border: 1px solid rgba(79, 172, 254, 0.25);
+				border-radius: 999px;
+				box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 			}
 			#player-badge.visible {
 				display: flex;

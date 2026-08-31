@@ -98,10 +98,15 @@ export class ConfirmModal {
 				align-items: center;
 				justify-content: center;
 				background: rgba(5, 5, 15, 0.75);
+				backdrop-filter: blur(6px);
+				-webkit-backdrop-filter: blur(6px);
 				z-index: 40;
-				font-family: 'Segoe UI', system-ui, sans-serif;
+				opacity: 1;
+				visibility: visible;
+				transition: opacity 0.2s ease, visibility 0.2s;
+				font-family: var(--font-body, 'Segoe UI', system-ui, sans-serif);
 			}
-			.cm-hidden { display: none !important; }
+			.cm-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 			.cm-panel {
 				width: min(360px, 90vw);
 				background: #0d1524;
@@ -111,8 +116,11 @@ export class ConfirmModal {
 				color: #e8f6ff;
 				text-align: center;
 				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+				transform: scale(1) translateY(0);
+				transition: transform 0.2s ease;
 			}
-			.cm-title { margin: 0 0 8px; font-size: 18px; color: #6ff7ff; letter-spacing: 0.3px; }
+			.cm-backdrop.cm-hidden .cm-panel { transform: scale(0.94) translateY(10px); }
+			.cm-title { margin: 0 0 8px; font-family: var(--font-display, inherit); font-size: 19px; font-weight: 700; color: #6ff7ff; letter-spacing: 0.3px; }
 			.cm-message { margin: 0 0 18px; font-size: 14px; color: #b8c6d9; line-height: 1.4; }
 			.cm-actions { display: flex; gap: 10px; justify-content: center; }
 			.cm-actions button {
@@ -122,19 +130,22 @@ export class ConfirmModal {
 				font-weight: 600;
 				border-radius: 999px;
 				cursor: pointer;
+				transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
 			}
+			.cm-actions button:active { transform: scale(0.97); }
 			.cm-confirm {
 				border: none;
 				color: #05121a;
 				background: linear-gradient(135deg, #6ff7ff, #4facfe);
 				box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
 			}
-			.cm-confirm:hover { filter: brightness(1.08); }
+			.cm-confirm:hover { filter: brightness(1.08); transform: translateY(-1px); }
 			.cm-cancel {
 				border: 1px solid #4facfe;
 				color: #6ff7ff;
 				background: transparent;
 			}
+			.cm-cancel:hover { background: rgba(79, 172, 254, 0.12); }
 			.cm-actions button:focus-visible {
 				outline: 2px solid #4facfe;
 				outline-offset: 2px;
