@@ -44,6 +44,9 @@ export class Hud {
 	setLives(lives) {
 		const alive = Math.max(lives, 0);
 		this.livesEl.textContent = '❤'.repeat(alive) + '🖤'.repeat(LIVES_START - alive);
+		// Pulse the hearts row on the last life so a near-death state is hard to
+		// miss mid-action, not just a subtly different icon color.
+		this.livesEl.classList.toggle('critical', alive === 1);
 	}
 
 	setLevel(levelNumber, totalLevels) {

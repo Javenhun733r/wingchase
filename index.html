@@ -43,6 +43,13 @@
 			#hud .lives {
 				letter-spacing: 4px;
 			}
+			#hud .lives.critical {
+				animation: lives-pulse 0.9s ease-in-out infinite;
+			}
+			@keyframes lives-pulse {
+				0%, 100% { opacity: 1; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6); }
+				50% { opacity: 0.55; text-shadow: 0 0 12px rgba(255, 70, 70, 0.9); }
+			}
 
 			#hint {
 				position: fixed;
@@ -217,7 +224,7 @@
 			</div>
 			<div class="row lives" id="lives">❤❤❤</div>
 		</div>
-		<div id="hint">WASD / Arrow Keys to move · P or Esc to pause</div>
+		<div id="hint">WASD / Arrow Keys to move · P or Esc to pause · L for leaderboards</div>
 		<div id="audio-bar">
 			<button id="audio-toggle" aria-label="Toggle music">🔊</button>
 			<input type="range" id="audio-volume" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
@@ -227,7 +234,7 @@
 			<img id="player-avatar" alt="" />
 			<span id="player-name"></span>
 		</div>
-		<div id="overlay">
+		<div id="overlay" role="status" aria-live="polite" aria-atomic="true">
 			<h1 id="overlay-title"></h1>
 			<p id="overlay-text"></p>
 			<div class="final-score" id="final-score"></div>
