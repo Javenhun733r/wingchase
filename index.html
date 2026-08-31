@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Wingchase</title>
+		<style>
+			:root {
+				color-scheme: dark;
+			}
+			html,
+			body {
+				margin: 0;
+				height: 100%;
+				overflow: hidden;
+				background: #0a0a1a;
+			}
+			body {
+				font-family: 'Segoe UI', system-ui, sans-serif;
+			}
+			canvas {
+				display: block;
+			}
+
+			#hud {
+				position: fixed;
+				top: 16px;
+				left: 16px;
+				color: #e8f6ff;
+				text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+				font-size: 20px;
+				letter-spacing: 0.5px;
+				pointer-events: none;
+				user-select: none;
+				z-index: 5;
+			}
+			#hud .row {
+				margin-bottom: 4px;
+			}
+			#hud .score-value {
+				color: #6ff7ff;
+				font-weight: 700;
+			}
+			#hud .lives {
+				letter-spacing: 4px;
+			}
+
+			#hint {
+				position: fixed;
+				bottom: 16px;
+				left: 16px;
+				color: #7d8aa3;
+				font-size: 13px;
+				letter-spacing: 0.5px;
+				pointer-events: none;
+				user-select: none;
+				z-index: 5;
+			}
+
+			#overlay {
+				position: fixed;
+				inset: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 14px;
+				background: radial-gradient(
+					circle at center,
+					rgba(10, 10, 26, 0.75),
+					rgba(5, 5, 15, 0.94)
+				);
+				color: #f2fbff;
+				text-align: center;
+				z-index: 10;
+				transition: opacity 0.25s ease;
+			}
+			#overlay.hidden {
+				opacity: 0;
+				pointer-events: none;
+			}
+			#overlay h1 {
+				margin: 0;
+				font-size: 42px;
+				letter-spacing: 2px;
+				color: #6ff7ff;
+				text-shadow: 0 0 20px rgba(111, 247, 255, 0.6);
+			}
+			#overlay p {
+				margin: 0;
+				font-size: 16px;
+				color: #b8c6d9;
+				max-width: 420px;
+				line-height: 1.5;
+			}
+			#overlay .final-score {
+				font-size: 20px;
+				color: #ffd166;
+				min-height: 24px;
+			}
+			#overlay .best-score {
+				font-size: 13px;
+				color: #7d8aa3;
+				min-height: 16px;
+			}
+			#overlay .stats {
+				font-size: 12px;
+				color: #6a7690;
+				min-height: 14px;
+			}
+			#overlay button {
+				margin-top: 10px;
+				padding: 12px 28px;
+				font-size: 16px;
+				font-weight: 600;
+				letter-spacing: 0.5px;
+				color: #05121a;
+				background: linear-gradient(135deg, #6ff7ff, #4facfe);
+				border: none;
+				border-radius: 999px;
+				cursor: pointer;
+				box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+			}
+			#overlay button:hover {
+				filter: brightness(1.08);
+			}
+			#overlay button.secondary {
+				margin-top: 0;
+				color: #6ff7ff;
+				background: transparent;
+				border: 1px solid #4facfe;
+				box-shadow: none;
+			}
+
+			#audio-bar {
+				position: fixed;
+				top: 64px;
+				right: 16px;
+				display: flex;
+				align-items: center;
+				gap: 0;
+				padding: 6px;
+				background: rgba(10, 10, 26, 0.6);
+				border: 1px solid rgba(79, 172, 254, 0.35);
+				border-radius: 999px;
+				box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+				z-index: 11;
+			}
+			#audio-bar.expanded {
+				gap: 10px;
+				padding: 6px 14px 6px 6px;
+			}
+			#audio-bar button {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				border: none;
+				background: rgba(255, 255, 255, 0.08);
+				color: #e8f6ff;
+				font-size: 16px;
+				line-height: 1;
+				cursor: pointer;
+			}
+			#audio-bar button:hover {
+				filter: brightness(1.2);
+			}
+			#audio-bar button:focus-visible,
+			#overlay button:focus-visible {
+				outline: 2px solid #4facfe;
+				outline-offset: 2px;
+			}
+			#audio-bar input[type='range'] {
+				display: none;
+				width: 120px;
+				accent-color: #4facfe;
+				cursor: pointer;
+			}
+			#audio-bar.expanded input[type='range'] {
+				display: block;
+			}
+
+			#player-badge {
+				position: fixed;
+				top: 16px;
+				right: 16px;
+				display: none;
+				align-items: center;
+				gap: 8px;
+				color: #e8f6ff;
+				text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+				font-size: 14px;
+				letter-spacing: 0.3px;
+				pointer-events: none;
+				user-select: none;
+				z-index: 5;
+			}
+			#player-badge.visible {
+				display: flex;
+			}
+			#player-badge img {
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				object-fit: cover;
+				box-shadow: 0 0 0 2px rgba(111, 247, 255, 0.5);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="hud">
+			<div class="row" id="level">Level 1 / 10</div>
+			<div class="row">
+				Score: <span class="score-value" id="score">0</span>
+			</div>
+			<div class="row lives" id="lives">❤❤❤</div>
+		</div>
+		<div id="hint">WASD / Arrow Keys to move · P or Esc to pause</div>
+		<div id="audio-bar">
+			<button id="audio-toggle" aria-label="Toggle music">🔊</button>
+			<input type="range" id="audio-volume" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
+		</div>
+		<audio id="bg-sound" src="/src/assets/bg-sound.mp3" loop preload="auto"></audio>
+		<div id="player-badge">
+			<img id="player-avatar" alt="" />
+			<span id="player-name"></span>
+		</div>
+		<div id="overlay">
+			<h1 id="overlay-title"></h1>
+			<p id="overlay-text"></p>
+			<div class="final-score" id="final-score"></div>
+			<div class="best-score" id="best-score"></div>
+			<div class="stats" id="stats"></div>
+			<button id="overlay-button"></button>
+			<button
+				id="continue-button"
+				class="secondary"
+				style="display: none"
+			></button>
+			<button
+				id="restart-button"
+				class="secondary"
+				style="display: none"
+			>Restart</button>
+			<button
+				id="leaderboard-button"
+				class="secondary"
+				style="display: none"
+			>Leaderboard</button>
+		</div>
+		<script type="module" src="/src/main.js"></script>
+	</body>
+</html>
