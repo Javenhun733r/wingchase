@@ -1,0 +1,34 @@
+name: Deploy to Player3
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web export
+        run: npm run build
+
+      - name: Deploy to Player3
+        env:
+          PLAYER3_API_TOKEN: ${{ secrets.PLAYER3_API_TOKEN }}
+          PLAYER3_GAME_ID: ${{ secrets.PLAYER3_GAME_ID }}
+        run: node public/sdk/build/player3-deploy.mjs --build ./dist --game-type full
